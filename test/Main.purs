@@ -2,11 +2,12 @@ module Test.Main
 ( main
 ) where
 
-import Control.Monad.Eff.Console (log)
-import Data.ByteString
+import Data.ByteString (ByteString, Encoding(..), Octet, cons, empty, foldl, foldr, fromString, head, init, isEmpty, last, length, map, pack, reverse, singleton, snoc, tail, uncons, unpack, unsnoc)
 import Data.Foldable as Foldable
 import Data.Maybe (Maybe(..))
-import Prelude hiding (map)
+import Effect (Effect)
+import Effect.Console (log)
+import Prelude (Unit, discard, flip, identity, (#), ($), (&&), (+), (-), (<$>), (<<<), (<>), (==))
 import Prelude as Prelude
 import Test.QuickCheck ((===), quickCheck)
 import Test.QuickCheck.Laws.Data.Eq (checkEq)
@@ -16,6 +17,7 @@ import Test.QuickCheck.Laws.Data.Semigroup (checkSemigroup)
 import Type.Proxy (Proxy(..))
 import Type.Quotient (mkQuotient, runQuotient)
 
+main :: Effect Unit
 main = do
     log "laws"
     checkEq        (Proxy :: Proxy ByteString)
@@ -93,4 +95,4 @@ withOctet :: ∀ a. (Octet -> a) -> Int -> a
 withOctet = flip $ (#) <<< mkQuotient
 
 withOctets :: ∀ a. (Array Octet -> a) -> Array Int -> a
-withOctets f xs = f (Prelude.map (withOctet id) xs)
+withOctets f xs = f (Prelude.map (withOctet identity) xs)
